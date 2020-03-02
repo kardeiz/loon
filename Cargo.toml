@@ -1,0 +1,13 @@
+[package]
+name = "loon"
+version = "0.1.0"
+authors = ["Jacob Brown <kardeiz@gmail.com>"]
+edition = "2018"
+license = "MIT"
+description = "Simple localization"
+readme = "README.md"
+repository = "https://github.com/kardeiz/loon"
+keywords = ["i18n", "localization", "internationalization"]
+categories = ["localization", "internationalization"]
+
+[dependencies]
