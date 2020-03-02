@@ -1,0 +1,8 @@
+greeting: Hello, World!
+special-greeting: Hello, {name}!!!
+messages: 
+  zero: You have no messages.
+  one: You have one message.
+  other: You have {count} messages.
+missing:
+  default: Sorry, that translation doesn't exist.
