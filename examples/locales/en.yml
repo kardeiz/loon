@@ -1,5 +1,10 @@
 greeting: Hello, World!
-special-greeting: Hello, {name}!!!
+custom:
+  greeting: Hello, {name}!!!
+a: 
+  very:
+    nested:
+      message: "Hello, {name}. Your message is: {message}"
 messages: 
   zero: You have no messages.
   one: You have one message.
