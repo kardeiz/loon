@@ -8,7 +8,7 @@ A very simple localization/internationalization provider, inspired by `ruby-i18n
 ```rust
 fn main() {
     
-    loon::set_config(loon::Config::default().with_path_pattern("examples/locales/en.yml")).unwrap();
+    loon::set_config(loon::Config::default().with_path_pattern("examples/locales/*.yml")).unwrap();
 
     assert_eq!(loon::t("/greeting", None).unwrap(), String::from("Hello, World!"));
 }
@@ -86,6 +86,13 @@ impl<'a> Opts<'a> {
     }
 }
 
+impl<'a> From<Option<Opts<'a>>> for Opts<'a> {
+    fn from(t: Option<Opts<'a>>) -> Self {
+        t.unwrap_or_else(Opts::default)
+    }
+}
+
+
 /// Container for translation messages
 #[derive(Debug)]
 pub struct Dictionary {
@@ -101,13 +108,13 @@ impl Default for Dictionary {
 
 impl Dictionary {
     /// Translate a message.
-    pub fn translate<'a, I: Into<Option<Opts<'a>>>>(
+    pub fn translate<'a, I: Into<Opts<'a>>>(
         &self,
         key: &str,
         opts: I,
     ) -> err::Result<String> {
         
-        let opts = opts.into().unwrap_or_else(Opts::default);
+        let opts = opts.into();
 
         let mut key = key;
 
@@ -261,16 +268,16 @@ pub fn set_config(config: Config) -> err::Result<()> {
 /// Translate a message using the global configuration.
 ///
 /// If you have not `set_config`, this will look for translation files in `config/locales`.
-pub fn translate<'a, I: Into<Option<Opts<'a>>>>(key: &str, opts: I) -> err::Result<String> {
-    let config = CONFIG.get_or_init(Config::global);
+pub fn translate<'a, I: Into<Opts<'a>>>(key: &str, opts: I) -> err::Result<String> {
+    static DICTIONARY: Lazy<Dictionary> = Lazy::new(|| {
+        CONFIG.get_or_init(Config::global).clone().finish().ok().unwrap_or_else(Dictionary::default)
+    });
 
-    let dict = Lazy::new(|| config.clone().finish().ok().unwrap_or_else(Dictionary::default));
-
-    dict.translate(key, opts)
+    DICTIONARY.translate(key, opts)
 }
 
 /// Shortcut for `translate`
-pub fn t<'a, I: Into<Option<Opts<'a>>>>(key: &str, opts: I) -> err::Result<String> {
+pub fn t<'a, I: Into<Opts<'a>>>(key: &str, opts: I) -> err::Result<String> {
     translate(key, opts)
 }
 
