@@ -1,8 +1,13 @@
-//! <h2>lo<span style="color:Silver;">calizati</span>on</h2>
+//! <h2>lo<span style="color:Silver;">[calizati]</span>on</h2>
 //!
-//! A very simple localization/internationalization provider, inspired by `ruby-i18n`.
+//! A very simple localization/internationalization library, inspired by `ruby-i18n`.
+//!
+//! Provides a (configurable) global `translate`/`t` function for convenience, as well
+//! as a `Dictionary` builder/container if you prefer to manage state directly.
 //!
 //! ## Usage:
+//!
+//! Global function:
 //!
 //! ```rust
 //! fn main() {
@@ -18,6 +23,30 @@
 //!
 //!     assert_eq!(
 //!         t("greeting", Opts::default().locale("de")).unwrap(),
+//!         String::from("Hallo Welt!")
+//!     );
+//! }
+//! ```
+//!
+//! Using a `Dictionary`:
+//!
+//! ```rust
+//! fn main() {
+//!
+//!     use loon::*;
+//!     
+//!     let dict = Config::default()
+//!         .with_path_pattern("examples/locales/*.yml")
+//!         .finish()
+//!         .unwrap();
+//!
+//!     assert_eq!(
+//!         dict.translate("custom.greeting", Var("name", "Jacob")).unwrap(),
+//!         String::from("Hello, Jacob!!!")
+//!     );
+//!
+//!     assert_eq!(
+//!         dict.translate("greeting", Opts::default().locale("de")).unwrap(),
 //!         String::from("Hallo Welt!")
 //!     );
 //! }
@@ -162,6 +191,30 @@ impl Dictionary {
             Some(vars) => Ok(strfmt::strfmt(&value, &vars)?),
             None => Ok(value),
         }
+    }
+
+    /// Shortcut for `translate`.
+    ///
+    /// `key` can be a dot-delimited `&str` or a `&[&str]` path.
+    ///
+    /// `opts` can be an `Opts` object, `None`, or `Var, `Count`, `Locale`, or `DefaultKey` (or up
+    /// to a `4-tuple` of these items).
+    ///
+    /// Examples:
+    /// ```rust, norun
+    /// use loon::*;
+    /// let dict = Dictionary::default();
+    /// let _ = dict.t("custom.greeting", Opts::default().var("name", "Jacob"));
+    /// let _ = dict.t(&["custom", "greeting"], Var("name", "Jacob"));    
+    /// let _ = dict.t("greeting", None);
+    /// let _ = dict.t("greeting", (Locale("de"), (DefaultKey("missing.message"))));
+    /// ```
+    pub fn t<'a, K: Into<Key<'a>>, I: Into<Opts<'a>>>(
+        &self,
+        key: K,
+        opts: I,
+    ) -> err::Result<String> {
+        self.translate(key, opts)
     }
 }
 
