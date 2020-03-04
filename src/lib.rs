@@ -122,7 +122,7 @@ impl Dictionary {
     ///
     /// `key` can be a dot-delimited `&str` or a `&[&str]` path.
     ///
-    /// `opts` can be an `Opts` object, `None`, or `Var, `Count`, `Locale`, or `DefaultKey` (or up
+    /// `opts` can be an `Opts` object, `None`, or `Var`, `Count`, `Locale`, or `DefaultKey` (or up
     /// to a `4-tuple` of these items).
     ///
     /// Examples:
@@ -197,7 +197,7 @@ impl Dictionary {
     ///
     /// `key` can be a dot-delimited `&str` or a `&[&str]` path.
     ///
-    /// `opts` can be an `Opts` object, `None`, or `Var, `Count`, `Locale`, or `DefaultKey` (or up
+    /// `opts` can be an `Opts` object, `None`, or `Var`, `Count`, `Locale`, or `DefaultKey` (or up
     /// to a `4-tuple` of these items).
     ///
     /// Examples:
