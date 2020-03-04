@@ -1,6 +1,6 @@
 [package]
 name = "loon"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Jacob Brown <kardeiz@gmail.com>"]
 edition = "2018"
 license = "MIT"
@@ -10,6 +10,10 @@ repository = "https://github.com/kardeiz/loon"
 keywords = ["i18n", "localization", "internationalization"]
 categories = ["localization", "internationalization"]
 
+[features]
+default = ["yaml"]
+yaml = ["serde_yaml"]
+
 [dependencies]
 strfmt = "0.1.6"
 once_cell = "1"
@@ -18,4 +22,5 @@ serde_json = "1"
 serde-transcode = "1"
 thiserror = "1"
 glob = "0.3"
-serde_yaml = "0.8"
+serde_yaml = { version = "0.8", optional = true }
+toml = { version = "0.5.6", optional = true }
