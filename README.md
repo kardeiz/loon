@@ -17,9 +17,9 @@ Global function:
 ```rust
 fn main() {
 
-    use loon::*;
+    use loon::prelude::*;
 
-    set_config(PathPattern("examples/locales/*.yml")).unwrap();
+    loon::set_config(PathPattern("examples/locales/*.yml")).unwrap();
 
     assert_eq!(
         t("custom.greeting", Var("name", "Jacob")).unwrap(),
@@ -38,7 +38,7 @@ Using a `Dictionary`:
 ```rust
 fn main() {
 
-    use loon::*;
+    use loon::prelude::*;
 
     let dict = Config::default()
         .with_path_pattern("examples/locales/*.yml")
@@ -66,6 +66,6 @@ Translation files can be:
 
 <hr/>
 
-Current version: 0.3.2
+Current version: 0.3.4
 
 License: MIT
