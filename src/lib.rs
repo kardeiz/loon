@@ -352,6 +352,8 @@ mod tests {
 
         assert_eq!(t("messages", Count(200)).unwrap(), String::from("You have 200 messages."));
 
+        assert!(t("message.x", ()).is_err());
+
         assert_eq!(
             t(
                 "a.very.nested.message",
