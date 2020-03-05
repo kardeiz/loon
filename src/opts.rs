@@ -99,7 +99,7 @@ where
     }
 }
 
-/// Options (optional) for the `translate` call
+/// Options for the `translate` call
 #[derive(Default)]
 pub struct Opts<'a> {
     pub(crate) default_key: Option<Key<'a>>,

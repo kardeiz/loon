@@ -84,36 +84,6 @@ where
     }
 }
 
-impl<'a, T, U, V, W, X> ConfigPart for (T, U, V, W, X)
-where
-    T: ConfigPart,
-    U: ConfigPart,
-    U: ConfigPart,
-    V: ConfigPart,
-    W: ConfigPart,
-    X: ConfigPart,
-{
-    fn add_to(self, opts: Config) -> Config {
-        self.4.add_to(self.3.add_to(self.2.add_to(self.1.add_to(self.0.add_to(opts)))))
-    }
-}
-
-impl<'a, T, U, V, W, X, Y> ConfigPart for (T, U, V, W, X, Y)
-where
-    T: ConfigPart,
-    U: ConfigPart,
-    U: ConfigPart,
-    V: ConfigPart,
-    W: ConfigPart,
-    X: ConfigPart,
-    Y: ConfigPart,
-{
-    fn add_to(self, opts: Config) -> Config {
-        self.5
-            .add_to(self.4.add_to(self.3.add_to(self.2.add_to(self.1.add_to(self.0.add_to(opts))))))
-    }
-}
-
 impl<T> From<T> for Config
 where
     T: ConfigPart,

@@ -12,9 +12,9 @@
 //! ```rust
 //! fn main() {
 //!
-//!     use loon::*;
+//!     use loon::prelude::*;
 //!     
-//!     set_config(PathPattern("examples/locales/*.yml")).unwrap();
+//!     loon::set_config(PathPattern("examples/locales/*.yml")).unwrap();
 //!
 //!     assert_eq!(
 //!         t("custom.greeting", Var("name", "Jacob")).unwrap(),
@@ -33,7 +33,7 @@
 //! ```rust
 //! fn main() {
 //!
-//!     use loon::*;
+//!     use loon::prelude::*;
 //!     
 //!     let dict = Config::default()
 //!         .with_path_pattern("examples/locales/*.yml")
@@ -97,12 +97,49 @@ mod config;
 mod key;
 mod opts;
 
+/// Helpers to build `Config` or `Opts` items
+pub mod helpers {
+
+    /// Helpers to build `Config` items
+    pub mod config {
+        pub use crate::config::{DefaultLocale, LocalizedPath, PathPattern};
+    }
+
+    /// Helpers to build `Opts` items
+    pub mod opts {
+        pub use crate::opts::{Count, DefaultKey, Locale, Var};
+    }
+}
+
+/// For convenience
+///
+/// ```rust
+/// pub use loon::{
+///     helpers::{config::*, opts::*},
+///     Config,
+///     Dictionary,
+///     Opts,
+///     translate,
+///     t
+/// };
+/// ```
+pub mod prelude {
+    pub use crate::{
+        helpers::{config::*, opts::*},
+        Config,
+        Dictionary,
+        Opts,
+        translate,
+        t
+    };
+}
+
 use once_cell::sync::{Lazy, OnceCell};
 use std::collections::HashMap;
 
-pub use config::{Config, DefaultLocale, LocalizedPath, PathPattern};
+pub use config::Config;
 pub use key::Key;
-pub use opts::{Count, DefaultKey, Locale, Opts, Var};
+pub use opts::Opts;
 
 /// Container for translation messages
 #[derive(Debug)]
@@ -126,8 +163,8 @@ impl Dictionary {
     /// to a `4-tuple` of these items).
     ///
     /// Examples:
-    /// ```rust, norun
-    /// use loon::*;
+    /// ```rust
+    /// use loon::prelude::*;
     /// let dict = Dictionary::default();
     /// let _ = dict.translate("custom.greeting", Opts::default().var("name", "Jacob"));
     /// let _ = dict.translate(&["custom", "greeting"], Var("name", "Jacob"));    
@@ -201,8 +238,8 @@ impl Dictionary {
     /// to a `4-tuple` of these items).
     ///
     /// Examples:
-    /// ```rust, norun
-    /// use loon::*;
+    /// ```rust
+    /// use loon::prelude::*;
     /// let dict = Dictionary::default();
     /// let _ = dict.t("custom.greeting", Opts::default().var("name", "Jacob"));
     /// let _ = dict.t(&["custom", "greeting"], Var("name", "Jacob"));    
@@ -223,13 +260,14 @@ static CONFIG: OnceCell<Config> = OnceCell::new();
 /// Sets the `Config` to use for the global `translate` call.
 ///
 /// `config` can be a `Config` object, or `DefaultLocale`, `PathPattern`, or `LocalizedPath` (or up
-/// to a `6-tuple` of these items).
+/// to a `4-tuple` of these items).
 ///
 /// Examples:
-/// ```rust, norun
-/// loon::set_config(loon::Config::default().with_path_pattern("examples/locales/*.yml"));
-/// loon::set_config(loon::PathPattern("examples/locales/*.yml"));
-/// loon::set_config((loon::PathPattern("examples/locales/*.yml"), loon::DefaultLocale("en")));
+/// ```rust
+/// use loon::prelude::*;
+/// loon::set_config(Config::default().with_path_pattern("examples/locales/*.yml"));
+/// loon::set_config(PathPattern("examples/locales/*.yml"));
+/// loon::set_config((PathPattern("examples/locales/*.yml"), DefaultLocale("en")));
 /// ```
 pub fn set_config<I: Into<Config>>(config: I) -> err::Result<()> {
     Ok(CONFIG.set(config.into()).map_err(|_| err::custom("`CONFIG` already set"))?)
@@ -243,8 +281,8 @@ pub fn set_config<I: Into<Config>>(config: I) -> err::Result<()> {
 /// to a `4-tuple` of these items).
 ///
 /// Examples:
-/// ```rust, norun
-/// use loon::*;
+/// ```rust
+/// use loon::prelude::*;
 /// let _ = translate("custom.greeting", Opts::default().var("name", "Jacob"));
 /// let _ = translate(&["custom", "greeting"], Var("name", "Jacob"));    
 /// let _ = translate("greeting", None);
@@ -261,12 +299,12 @@ pub fn translate<'a, K: Into<Key<'a>>, I: Into<Opts<'a>>>(key: K, opts: I) -> er
 ///
 /// `key` can be a dot-delimited `&str` or a `&[&str]` path.
 ///
-/// `opts` can be an `Opts` object, `None`, or `Var, `Count`, `Locale`, or `DefaultKey` (or up
+/// `opts` can be an `Opts` object, `None`, or `Var`, `Count`, `Locale`, or `DefaultKey` (or up
 /// to a `4-tuple` of these items).
 ///
 /// Examples:
-/// ```rust, norun
-/// use loon::*;
+/// ```rust
+/// use loon::prelude::*;
 /// let _ = t("custom.greeting", Opts::default().var("name", "Jacob"));
 /// let _ = t(&["custom", "greeting"], Var("name", "Jacob"));    
 /// let _ = t("greeting", None);
@@ -279,11 +317,11 @@ pub fn t<'a, K: Into<Key<'a>>, I: Into<Opts<'a>>>(key: K, opts: I) -> err::Resul
 #[cfg(test)]
 mod tests {
 
-    use crate::*;
+    use crate::prelude::*;
 
     #[test]
     fn it_works() {
-        set_config(PathPattern("examples/locales/*.yml")).unwrap();
+        crate::set_config(PathPattern("examples/locales/*.yml")).unwrap();
 
         assert_eq!(t(&["greeting"], None).unwrap(), String::from("Hello, World!"));
 
